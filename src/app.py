@@ -8,7 +8,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app)
+CORS(app,origins=[
+    'https://healthsync-alpha.vercel.app',
+    'http://localhost:3000'
+])
 
 # Add a test endpoint for GET requests
 @app.route('/', methods=['GET'])
