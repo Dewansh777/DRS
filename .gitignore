@@ -1,7 +1,6 @@
 # Ignore sensitive files containing API keys and other private data
 
 # Ignore pinecone_integration.py file in the src folder
-/src/pinecone_integration.py
 
 # Ignore .env file that stores sensitive data like API keys
 .env
