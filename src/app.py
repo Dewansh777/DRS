@@ -1,13 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
+from model import search_embeddings
 import logging
 import os
-import sys
-
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from model import search_embeddings
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -15,6 +10,10 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy"}), 200
 
 @app.route('/', methods=['GET'])
 def home():
