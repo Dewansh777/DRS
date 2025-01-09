@@ -5,18 +5,24 @@ import logging
 import os
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s: %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
 
+# Add a health check endpoint
 @app.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({"status": "healthy"}), 200
+    logger.info("Health check endpoint called")
+    return jsonify({"status": "healthy", "port": os.environ.get("PORT", 10000)}), 200
 
 @app.route('/', methods=['GET'])
 def home():
+    logger.info("Home endpoint called")
     return render_template('index.html')
 
 @app.route('/about', methods=['GET'])
@@ -60,6 +66,14 @@ def get_recommendation():
         logger.error(f"Error processing request: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+def create_app():
+    port = int(os.environ.get("PORT", 10000))
+    logger.info(f"Starting application on port {port}")
+    return app
+
+app = create_app()
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    logger.info(f"Running app on port {port}")
+    app.run(host="0.0.0.0", port=port, debug=False)
