@@ -13,7 +13,7 @@ max_requests_jitter = 0
 # Logging
 accesslog = "-"
 errorlog = "-"
-loglevel = "debug"
+loglevel = "info"
 
 # SSL
 keyfile = None
