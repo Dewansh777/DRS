@@ -1,0 +1,80 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="recommendation-container">
+    <h1 class="main-title">Doctor Recommendation System</h1>
+    <div class="recommendation-form">
+        <form id="recommendationForm" class="form">
+            <div class="form-group">
+                <label for="symptoms" class="form-label">Describe your symptoms:</label>
+                <textarea 
+                    id="symptoms" 
+                    name="symptoms" 
+                    class="form-input" 
+                    rows="4" 
+                    placeholder="Please describe your symptoms in detail..."
+                    required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Get Recommendation</button>
+        </form>
+    </div>
+
+    <div id="loader" class="loader hidden">
+        <div class="spinner"></div>
+        <p>Getting recommendation...</p>
+    </div>
+
+    <div id="result" class="result-container hidden">
+        <h2>Recommended Department</h2>
+        <div class="department-card">
+            <div id="departmentName" class="department-name"></div>
+            <div id="confidenceScore" class="confidence-score"></div>
+        </div>
+    </div>
+
+    <div id="error" class="error-message hidden"></div>
+</div>
+
+<script>
+document.getElementById('recommendationForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const symptoms = document.getElementById('symptoms').value;
+    const loader = document.getElementById('loader');
+    const result = document.getElementById('result');
+    const error = document.getElementById('error');
+    
+    loader.classList.remove('hidden');
+    result.classList.add('hidden');
+    error.classList.add('hidden');
+
+    try {
+        const response = await fetch('/recommendation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: symptoms })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('departmentName').textContent = data.department;
+            document.getElementById('confidenceScore').textContent = 
+                `Confidence Score: ${(data.score * 100).toFixed(1)}%`;
+            result.classList.remove('hidden');
+        } else {
+            error.textContent = data.error || 'Failed to get recommendation';
+            error.classList.remove('hidden');
+        }
+    } catch (err) {
+        error.textContent = 'An error occurred. Please try again.';
+        error.classList.remove('hidden');
+    } finally {
+        loader.classList.add('hidden');
+    }
+});
+</script>
+{% endblock %}

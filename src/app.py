@@ -1,31 +1,27 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from model import search_embeddings
 import logging
 import os
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app,origins=[
-    'https://healthsync-alpha.vercel.app',
-    'http://localhost:3000'
-])
+CORS(app)
 
-# Add a test endpoint for GET requests
 @app.route('/', methods=['GET'])
 def home():
-    return jsonify({"message": "Doctor Recommendation API is running"}), 200
+    return render_template('index.html')
 
-@app.route('/test', methods=['GET'])
-def test():
-    return jsonify({"message": "Test endpoint is working"}), 200
+@app.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
 
 @app.route('/recommendation', methods=['POST'])
 def get_recommendation():
     try:
-        # Get the JSON data from the request
         data = request.get_json()
         
         if not data:
@@ -40,12 +36,10 @@ def get_recommendation():
 
         logger.info(f"Processing query: {query}")
         
-        # Get recommendation from the model
         result = search_embeddings(query)
         
         logger.info(f"Search result: {result}")
 
-        # Process the result and send back as JSON response
         if result and result.get('matches'):
             match = result['matches'][0]
             response = {
@@ -64,5 +58,5 @@ def get_recommendation():
 
 if __name__ == "__main__":
     logger.info("Starting Flask application...")
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
