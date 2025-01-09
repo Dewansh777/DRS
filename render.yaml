@@ -2,13 +2,13 @@ services:
   - type: web
     name: doctor-recommendation-system
     env: python
-    region: oregon
     buildCommand: pip install -r requirements.txt
-    startCommand: cd src && gunicorn app:app
+    startCommand: cd src && gunicorn app:app --bind 0.0.0.0:$PORT
     envVars:
       - key: PINECONE_API_KEY
         sync: false
       - key: PYTHONPATH
         value: src
+      - key: PORT
+        value: 10000
     healthCheckPath: /
-    autoDeploy: true

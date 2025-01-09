@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from pinecone import Pinecone, ServerlessSpec
 
 # Load environment variables from the .env file
-load_dotenv()
+load_dotenv(override=True)
 
 def init_pinecone():
     ap = os.getenv('PINECONE_API_KEY')
